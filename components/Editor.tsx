@@ -15,19 +15,19 @@ export default function Editor({ note, onUpdate }: EditorProps) {
 
   if (!note) {
     return (
-      <div className="flex-1 flex items-center justify-center text-neutral-500">
+      <div className="flex-1 flex items-center justify-center text-neutral-500 bg-[#1e1e1e]">
         Loading...
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col bg-[#1e1e1e]">
       <textarea
         value={note.content}
         onChange={handleChange}
-        placeholder="Start typing or paste your content here..."
-        className="flex-1 w-full resize-none bg-neutral-950 text-neutral-100 font-mono text-base p-6 focus:outline-none placeholder:text-neutral-600"
+        placeholder="Start typing..."
+        className="flex-1 w-full resize-none bg-[#1e1e1e] text-neutral-200 font-mono text-[15px] leading-relaxed p-6 focus:outline-none placeholder:text-neutral-600"
         spellCheck={false}
         autoFocus
       />

@@ -1,10 +1,9 @@
 'use client';
 
 import { useNotes } from '@/hooks/useNotes';
-import Header from '@/components/Header';
+import TabBar from '@/components/TabBar';
 import Editor from '@/components/Editor';
 import Controls from '@/components/Controls';
-import NoteList from '@/components/NoteList';
 
 export default function Home() {
   const {
@@ -36,47 +35,34 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center">
+      <div className="h-full flex items-center justify-center bg-[#1e1e1e]">
         <div className="text-neutral-500">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col">
-      <Header />
+    <div className="h-full flex flex-col bg-[#1e1e1e]">
+      {/* Chrome-style Tab Bar */}
+      <TabBar
+        notes={notes}
+        activeNoteId={activeNoteId}
+        onSelectNote={setActiveNote}
+        onCreateNote={createNote}
+        onDeleteNote={deleteNote}
+      />
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
-        <aside className="w-64 border-r border-neutral-700 bg-neutral-900 flex flex-col">
-          <div className="p-4 border-b border-neutral-700">
-            <button
-              onClick={createNote}
-              className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors font-medium"
-            >
-              + New Note
-            </button>
-          </div>
+      {/* Main Editor Area */}
+      <main className="flex-1 flex flex-col overflow-hidden">
+        <Editor note={activeNote} onUpdate={updateNote} />
 
-          <NoteList
-            notes={notes}
-            activeNoteId={activeNoteId}
-            onSelectNote={setActiveNote}
-          />
-        </aside>
-
-        {/* Main Editor Area */}
-        <main className="flex-1 flex flex-col overflow-hidden">
-          <Editor note={activeNote} onUpdate={updateNote} />
-
-          <Controls
-            note={activeNote}
-            onCopy={handleCopy}
-            onDelete={handleDelete}
-            onNew={createNote}
-          />
-        </main>
-      </div>
+        <Controls
+          note={activeNote}
+          onCopy={handleCopy}
+          onDelete={handleDelete}
+          onNew={createNote}
+        />
+      </main>
     </div>
   );
 }
