@@ -54,7 +54,7 @@ export function useNotes() {
   }, []);
 
   const handleUpdateNote = useCallback(
-    async (id: string, content: string, immediate: boolean = false) => {
+    async (id: string, content: string, images?: string[], immediate: boolean = false) => {
       // Clear existing debounce timer
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
@@ -64,14 +64,14 @@ export function useNotes() {
       setNotes((prev) =>
         prev.map((note) =>
           note.id === id
-            ? { ...note, content, updatedAt: Date.now() }
+            ? { ...note, content, images: images !== undefined ? images : note.images, updatedAt: Date.now() }
             : note
         )
       );
 
       const performUpdate = async () => {
         try {
-          const updated = await updateNote(id, content);
+          const updated = await updateNote(id, content, images);
           if (updated) {
             setNotes((prev) =>
               prev.map((note) => (note.id === id ? updated : note))

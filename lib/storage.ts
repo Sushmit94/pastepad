@@ -19,6 +19,7 @@ export async function createNote(content: string = ''): Promise<Note> {
   const note: Note = {
     id: generateUUID(),
     content,
+    images: [], // Initialize with empty images array
     createdAt: now,
     updatedAt: now,
   };
@@ -26,7 +27,7 @@ export async function createNote(content: string = ''): Promise<Note> {
   return note;
 }
 
-export async function updateNote(id: string, content: string): Promise<Note | null> {
+export async function updateNote(id: string, content: string, images?: string[]): Promise<Note | null> {
   const db = await getDB();
   const existing = await db.get(STORE_NAME, id);
   
@@ -37,6 +38,7 @@ export async function updateNote(id: string, content: string): Promise<Note | nu
   const updated: Note = {
     ...existing,
     content,
+    images: images !== undefined ? images : existing.images, // Update images if provided, otherwise keep existing
     updatedAt: Date.now(),
   };
 
