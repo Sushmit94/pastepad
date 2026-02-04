@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, ClipboardEvent } from 'react';
+import { useRef, useEffect, ClipboardEvent } from 'react';
 import type { Note } from '@/types/note';
 
 interface EditorProps {
@@ -9,22 +9,35 @@ interface EditorProps {
 }
 
 export default function Editor({ note, onUpdate }: EditorProps) {
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (note) {
-      onUpdate(note.id, e.target.value);
+  const editableRef = useRef<HTMLDivElement>(null);
+
+  // Helper to turn URLs in text into HTML strings
+  const linkify = (text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(urlRegex, (url) => {
+        return `<span class="text-blue-400 underline pointer-events-none">${url}</span>`;
+      });
+  };
+
+  const handleInput = () => {
+    if (note && editableRef.current) {
+      const content = editableRef.current.innerText;
+      onUpdate(note.id, content);
     }
   };
 
-  const handlePaste = async (e: ClipboardEvent<HTMLTextAreaElement>) => {
+  const handlePaste = async (e: ClipboardEvent<HTMLDivElement>) => {
     const items = e.clipboardData?.items;
     if (!items || !note) return;
 
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
-      
       if (item.type.indexOf('image') !== -1) {
         e.preventDefault();
-        
         const file = item.getAsFile();
         if (file) {
           const reader = new FileReader();
@@ -45,6 +58,14 @@ export default function Editor({ note, onUpdate }: EditorProps) {
     onUpdate(note.id, note.content, updatedImages);
   };
 
+  // This effect ensures the visual HTML matches the note content 
+  // without losing the cursor position
+  useEffect(() => {
+    if (editableRef.current && note && editableRef.current.innerText !== note.content) {
+      editableRef.current.innerHTML = linkify(note.content);
+    }
+  }, [note?.content]);
+
   if (!note) {
     return (
       <div className="flex-1 flex items-center justify-center text-neutral-500 bg-[#1e1e1e]">
@@ -56,14 +77,15 @@ export default function Editor({ note, onUpdate }: EditorProps) {
   return (
     <div className="flex-1 flex flex-col bg-[#1e1e1e] overflow-hidden">
       <div className="flex-1 overflow-y-auto p-6">
-        <textarea
-          value={note.content}
-          onChange={handleChange}
+        <div
+          ref={editableRef}
+          contentEditable
+          onInput={handleInput}
           onPaste={handlePaste}
-          placeholder="Start typing or paste images..."
-          className="w-full min-h-[200px] resize-none bg-transparent text-neutral-200 font-mono text-[15px] leading-relaxed focus:outline-none placeholder:text-neutral-600 border-none"
+          className="w-full min-h-[200px] outline-none text-neutral-200 font-mono text-[15px] leading-relaxed whitespace-pre-wrap break-all"
           spellCheck={false}
-          autoFocus
+          suppressContentEditableWarning={true}
+          data-placeholder="Start typing or paste images..."
         />
 
         {note.images && note.images.length > 0 && (
@@ -78,7 +100,6 @@ export default function Editor({ note, onUpdate }: EditorProps) {
                 <button
                   onClick={() => handleRemoveImage(index)}
                   className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-md opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center font-bold"
-                  title="Remove image"
                 >
                   ✕
                 </button>
@@ -87,6 +108,14 @@ export default function Editor({ note, onUpdate }: EditorProps) {
           </div>
         )}
       </div>
+
+      <style jsx>{`
+        [contentEditable]:empty:before {
+          content: attr(data-placeholder);
+          color: #525252;
+          cursor: text;
+        }
+      `}</style>
     </div>
   );
 }
