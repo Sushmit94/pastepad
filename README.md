@@ -1,4 +1,4 @@
-Elevate your daily productivity with Pastepad, a lightweight, streamlined browser application designed to bridge the gap between temporary clipboard data and long-term notes. Unlike standard clipboard managers that lose data upon closing a tab or shutting down the computer, it utilizes advanced web local storage to ensure your text snippets are securely saved and immediately available upon your next session.
+Elevate your daily productivity with Pastepad, a lightweight, streamlined browser application designed to bridge the gap between temporary clipboard data and long-term notes. Unlike standard clipboard managers that lose data upon closing a tab or shutting down the computer, it uses advanced web local storage to ensure your text snippets are securely saved and immediately available upon your next session.
 Key Features:
 Persistent Storage: Rest assured that your copied text survives browser shutdowns, tab closures, and system restarts.
 Zero-Login Workflow: No sign-ups required. Your data stays locally on your device, ensuring maximum privacy.
