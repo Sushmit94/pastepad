@@ -20,7 +20,7 @@ export default function TabBar({
 }: TabBarProps) {
   const handleDeleteClick = (e: React.MouseEvent, noteId: string) => {
     e.stopPropagation();
-    if (notes.length > 1) {
+    if (notes.length > 1 && confirm('Delete this tab?')) {
       onDeleteNote(noteId);
     }
   };
@@ -54,6 +54,8 @@ export default function TabBar({
               {notes.length > 1 && (
                 <button
                   onClick={(e) => handleDeleteClick(e, note.id)}
+                  type="button"
+                  title="Delete tab"
                   className={`
                     p-0.5 rounded hover:bg-neutral-600/50 transition-colors
                     ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
