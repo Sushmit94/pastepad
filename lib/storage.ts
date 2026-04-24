@@ -18,6 +18,7 @@ export async function createNote(content: string = ''): Promise<Note> {
   const now = Date.now();
   const note: Note = {
     id: generateUUID(),
+    title: 'Untitled',
     content,
     images: [], // Initialize with empty images array
     createdAt: now,
@@ -39,6 +40,24 @@ export async function updateNote(id: string, content: string, images?: string[])
     ...existing,
     content,
     images: images !== undefined ? images : existing.images, // Update images if provided, otherwise keep existing
+    updatedAt: Date.now(),
+  };
+
+  await db.put(STORE_NAME, updated);
+  return updated;
+}
+
+export async function updateNoteTitle(id: string, title: string): Promise<Note | null> {
+  const db = await getDB();
+  const existing = await db.get(STORE_NAME, id);
+
+  if (!existing) {
+    return null;
+  }
+
+  const updated: Note = {
+    ...existing,
+    title,
     updatedAt: Date.now(),
   };
 

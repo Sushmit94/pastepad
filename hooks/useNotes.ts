@@ -4,6 +4,7 @@ import {
   getAllNotes,
   createNote,
   updateNote,
+  updateNoteTitle,
   deleteNote,
   clearAllNotes,
 } from '@/lib/storage';
@@ -133,6 +134,27 @@ export function useNotes() {
     setActiveNoteId(id);
   }, []);
 
+  const handleRenameNote = useCallback(async (id: string, title: string) => {
+    const normalizedTitle = title.trim() || 'Untitled';
+
+    setNotes((prev) =>
+      prev.map((note) =>
+        note.id === id
+          ? { ...note, title: normalizedTitle, updatedAt: Date.now() }
+          : note
+      )
+    );
+
+    try {
+      const updated = await updateNoteTitle(id, normalizedTitle);
+      if (updated) {
+        setNotes((prev) => prev.map((note) => (note.id === id ? updated : note)));
+      }
+    } catch (error) {
+      console.error('Failed to rename note:', error);
+    }
+  }, []);
+
   return {
     notes,
     activeNote,
@@ -143,5 +165,6 @@ export function useNotes() {
     deleteNote: handleDeleteNote,
     clearAll: handleClearAll,
     setActiveNote: handleSetActiveNote,
+    renameNote: handleRenameNote,
   };
 }

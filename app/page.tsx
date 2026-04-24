@@ -13,6 +13,7 @@ export default function Home() {
     isLoading,
     createNote,
     updateNote,
+    renameNote,
     deleteNote,
     setActiveNote,
   } = useNotes();
@@ -49,6 +50,7 @@ export default function Home() {
         activeNoteId={activeNoteId}
         onSelectNote={setActiveNote}
         onCreateNote={createNote}
+        onRenameNote={renameNote}
         onDeleteNote={deleteNote}
       />
 
